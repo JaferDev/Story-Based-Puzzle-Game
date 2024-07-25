@@ -1,4 +1,5 @@
 using System.Diagnostics;
+
 class Object // Parent class for objects
 {
     public bool isUsable, isBuyable, isSellable;
@@ -57,7 +58,7 @@ class Object // Parent class for objects
         Program.Conversation("Self", $"Confirm selling {Name}?", 0f);
         if (Console.ReadKey().Key == ConsoleKey.X)
         {
-            Player.Money += sellValue - 10 - (tradeDiscount / 100 * sellValue) + (cashDiscount / 100 * sellValue);
+            Player.Money += Program.FloorDivide(sellValue - 10 - (tradeDiscount / 100 * sellValue) + (cashDiscount / 100 * sellValue), 1);
             Player.isTransaction = true;
             Owner = buyerName;
             Program.Conversation("Self", "Balance: " + Player.Money, 1f);
@@ -301,7 +302,7 @@ class WeaponsBase // Base Parent class for all weapons
         if (Console.ReadKey().Key == ConsoleKey.X)
         {
             Console.WriteLine(Name + " has been sold");
-            Player.Money += Cost - discount / 100 * Cost;
+            Player.Money += Program.FloorDivide(Cost - discount / 100 * Cost, 1);
             Player.isTransaction = true;
             Console.ForegroundColor = ConsoleColor.White; Console.WriteLine("Transaction cancelled\nRelation with " + buyerName + " has improved.");
             Player.noSold++;
@@ -662,7 +663,7 @@ class Program //Main Program
         ushort dayCount = 1; //Count no. of days
         ushort eventNo = 1; //Count event number
         //Actual program start
-        Player.distanceTravelled = 0; Player.dmgDone = 0; Player.HP = 100; Player.Money = 499999; Player.npcFriended = 0; Player.shotsShot = 0; Player.Speed = 25; Player.Stamina = 36; Player.Strength = 15; Player.maxHP = 100; Player.gramsSowed = 0; Player.Name = "Ayman"; Player.isCensor = true; Player.workNo = 428;//Assign Player values as it's a static class
+        Player.distanceTravelled = 0; Player.dmgDone = 0; Player.HP = 100; Player.Money = 1209; Player.npcFriended = 0; Player.shotsShot = 0; Player.Speed = 25; Player.Stamina = 36; Player.Strength = 15; Player.maxHP = 100; Player.gramsSowed = 0; Player.Name = "Ayman"; Player.isCensor = true; Player.workNo = 428;//Assign Player values as it's a static class
         if (OperatingSystem.IsWindows()) //Checks if operating system is windows to avoid Warning CA1416
         {
             Console.Title = "Story - Based Puzzle Game";
@@ -672,10 +673,7 @@ class Program //Main Program
         {
             switch (dayCount)
             {
-                case 1: //DAY 1
-                    switch (eventNo)
-                    {
-                        case 0: //START MENU    
+                case 0: //START MENU    
                             Conversation("Info", "<gameName>\n", 1);
                             Conversation("Info", "\t\t\tSTART MENU", 1);
                             Conversation("Info", "1) CONTROLS\n2) LOAD SAVE\n3) NEW GAME", 0);
@@ -692,7 +690,11 @@ class Program //Main Program
                             }
                             Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
                             eventNo++; break;
-                        case 1: //Intro to PlayerMovement, colour based text, buying and eating food 
+
+                case 1: //DAY 1
+                    switch (eventNo)
+                    {
+                        case 0: //Intro to PlayerMovement, colour based text, buying and eating food 
                             Conversation("Narrator", "Petince Prison, Okuwunya. A prison controlled jointly by prisoners and guards", 1);
                             Conversation("Friend", "Good morning sister! Today is your turn to pick up the trash in the hallways.", 1);
                             Conversation("Player", ":(", 1f);
@@ -733,6 +735,7 @@ class Program //Main Program
                                 else { break; }
                             }
                             Conversation("Narrator", "Alejandro smiles", 1);
+                            Conversation("Narrator", "You're first in line now", 1);
                             Conversation("Hostile", "Ey what do you want kid.", 1);
                             EatFood(Waffle, Pancake, Porridge);
                             Conversation("Narrator", "You eat your food with Alejandro", 1);
@@ -740,7 +743,7 @@ class Program //Main Program
                             PlayerMovement(109, 7, "Game Hall 4", true);
                             Console.WriteLine(eventNo);
                             eventNo++; break;
-                        case 2: //Time Based Button Clicking game 
+                        case 1: //Time Based Button Clicking game 
                             Conversation("Friend", "WELCOME TO THE 983rd DAILY GAMES. TODAY'S GAME IS A TIME ACCURACY BUTTON-CLICKING GAME AND IS RATED A 5.5/10 DIFFICULTY", 1f);
                             Conversation("Friend", "THE PLAYERS FOR THIS GAME WILL BE ADIL, FABRIZIO, OUMAR, AND AYMAN", 1f);
                             Conversation("Friend", "Players, please take a seat and enjoy :)", 1);
@@ -765,17 +768,17 @@ class Program //Main Program
                             EatFood(MuttonBiryani, Porridge, HoneyChickenThighs);
                             Conversation("Friend", "Well that was a good rest sister, now let's do some exercise in the courtyard", 1);
                             eventNo++; break;
-                        case 3: //Exercise
+                        case 2: //Exercise
                             PlayerMovement(132, 12, "Courtyard", true);
                             Exercise("Friend");
                             Conversation("Narrator", "You sit down on a bench and look at the sky...", 5);
                             Conversation("Friend", "Sister, let's go do our daily jobs now!", 1);
                             PressX("Press X to dap Alejandro up");
                             eventNo++; break;
-                        case 4: //Laundry
+                        case 3: //Laundry
                             PlayerMovement(80, 2, "Laundry Room", true);
                             Conversation("Narrator", "You enter a room with 14 people beginning to do the entire prisons' laundry. You spot Pedro in the corner and walk towards him", 0);
-                            Conversation("Friend", "Ay wassup Ayman, looks like we'll be stuck here for an hour. Also here's the 10 bucks I owed you", 1);
+                            Conversation("Friend", "Ay wassup Ayman, looks like you'll be stuck here for an hour. Also here's the 10 bucks I owed you", 1);
                             Player.Money += 10;
                             Conversation("Friend", "Thanks man you've been a great help. Anyways, all the best with your shift mine, ends now", 1);
                             Conversation("Narrator", "You begin cleaning the clothes", 1);
@@ -783,7 +786,7 @@ class Program //Main Program
                             Player.Money += 10;
                             Conversation("Self", $"Balance: {Player.Money}", 1);
                             eventNo++; break;
-                        case 5: //Labour
+                        case 4: //Labour
                             Conversation("Friend", "Alright sister, it's time for labour now :( Have fun sister, hopefully we get the soap making one!", 1);
                             PlayerMovement(100, 32, "Labour Center", true);
                             Conversation("Narrator", "You walk in and see a small hall full of hundreds of people with a screen in the middle and four people with large signs in each corner of the room. You hand your work coupon to the \"Work Inspector\" and are given the number 428", 1);
@@ -798,13 +801,13 @@ class Program //Main Program
                             PressX("Press X for Thumbs Down");
                             Conversation("Friend", "Dang", 1);
                             eventNo++; break;
-                        case 6: //Dinner Time nom nom
+                        case 5: //Dinner Time nom nom
                             PlayerMovement(123, 45, "Canteen", true);
                             Conversation("Hostile", "Not this fatass again, what do you want.", 1);
                             Player.isTransaction = false;   
                             EatFood(MuttonBiryani, LiteralAcid, Porridge);
                             eventNo++; break;
-                        case 7: //Market yipeeeeee
+                        case 6: //Market yipeeeeee
                             Conversation("Friend", "Man where is Alej this is insane, anyways let's go to the market, I know you're running low on pistol ammo and heals so get those", 1);
                             PressX("X for thumbs up");
                             PlayerMovement(128, 124, "Market", true);
@@ -957,7 +960,7 @@ class Program //Main Program
                 {
                     Console.Write(a);
                 }
-                if (Text.IndexOf(a) != -1)
+                if (Text.Contains(a))
                 {
                     switch (a)
                     {
@@ -1383,7 +1386,7 @@ class Program //Main Program
                 Conversation("Hostile", "As usual, you're split into teams of 16. I better see 19 acres full of wheat in the next 8hrs.", 1);
                 int p = RandomNumberGenerator.Next(900, 1875); //Grams sown
                 Conversation("Narrator", $"8hrs pass and you sow {p}g of wheat. You got {p / 8}$", 0.2f); //Can earn between 112.5$ and 234.375$
-                Player.Money += p / 8;
+                Player.Money += FloorDivide(p / 8, 1);
                 Player.gramsSowed += (ushort)p;
                 break;
             case 1: //Manufacture clothes
@@ -1392,7 +1395,7 @@ class Program //Main Program
                 int q = RandomNumberGenerator.Next(10, 20);
                 Conversation("Hostile", "As the leading manufacturer for Nike, we expect amazing results from you all.", 0.5f);
                 Conversation("Narrator", $"8hrs pass and you create {q} shoes. You got {q * 13}$", 0.2f); //Can earn between 130$ and 260$
-                Player.Money += q * 13;
+                Player.Money += FloorDivide(q * 13, 1);
                 Player.shoesMade += (ushort)q;
                 break;
             case 2: //Manufacture Soap
@@ -1401,7 +1404,7 @@ class Program //Main Program
                 int r = RandomNumberGenerator.Next(40, 60);
                 Conversation("Hostile", "As the leading manufacturer for Bath & Body Works, we expect amazing results from you all.", 0.5f);
                 Conversation("Narrator", $"8hrs pass and you create {r} soap bars. You got {r * 3}$", 0.2f); //Can earn between 120$ and 180$
-                Player.Money += r * 3;
+                Player.Money += FloorDivide(r * 3, 1);
                 Player.soapMade += (ushort)r;
                 break;
             case 3: //Clean Prison
@@ -1477,7 +1480,7 @@ class Program //Main Program
                                                 BuyGun(2);
                                                 break;
                                             case ConsoleKey.D4: //Ammos
-                                                Conversation("Friend", "What ammo would you like? \n1) Handgun\n2) Shotgun\n3) Rifle", 0);
+                                                Conversation("Friend", "\nWhat ammo would you like? \n1) Handgun\n2) Shotgun\n3) Rifle", 0);
                                                 var ammoBuy = Console.ReadKey().Key;
                                                 switch (ammoBuy)
                                                 {
@@ -1620,7 +1623,7 @@ class Program //Main Program
                     break;
                 case ConsoleKey.D2: //Items Shop
                     PlayerMovement(-7, 0, "Items Shop", false);
-                    while (Player.isTransaction == false)
+                    while (!Player.isTransaction)
                     {
                         Conversation("Friend", "Would you like to buy items or sell items?", 0.3f);
                         var buyOrSellItems = Console.ReadKey().Key; Console.WriteLine();
@@ -1832,7 +1835,7 @@ class Program //Main Program
         }
         if (Player.Money == 0)
         {
-            Conversation("Self", "Broke ass bitch. Imagine having all your money gone ", 0);
+            Conversation("Self", "Brokie. Imagine having all your money gone ", 0);
         }
     }
     static void TimeButton(float time, int roundNo)
@@ -1862,7 +1865,7 @@ class Program //Main Program
         float accuracy = 1;
         if (Math.Abs(seconds - time) <= 3) //Accuracy is for displaying who got shocked and all
         {
-            accuracy = -100 * (Math.Abs(seconds - time) - 3)/3;
+            accuracy = FloorDivide(-100 * (Math.Abs(seconds - time) - 3)/3, 1f);
         }
         else
         {
@@ -1871,11 +1874,11 @@ class Program //Main Program
         Console.WriteLine($"{seconds} seconds");
         if (time - 2 <= seconds && seconds <= time)
         {
-            Player.Money += 50*(seconds + 2 - time)/3; //Math type shit
+            Player.Money += FloorDivide(50*(seconds + 2 - time)/3, 1f); //Math type shit
         }
         else if (seconds < time + 2 && seconds > time)
         {
-            Player.Money += -100 * (seconds - time - 2)/6;
+            Player.Money += FloorDivide(-100 * (seconds - time - 2)/6, 1f);
         }
         if (accuracy >= 95)
         {
@@ -1885,7 +1888,7 @@ class Program //Main Program
         else if (accuracy == 0)
         {
             Conversation("Friend", "OOF AYMAN WAS WAYY OFF! He's gonna get shocked real bad now!!", 0.3f);
-            Conversation("Narrator", "You get shocked at 10000 volts for 1 second. You wish you could scream", 1);
+            Conversation("Narrator", "You get shocked at 500 volts for 1 second. You wish you could scream", 1);
         }
         else if (accuracy >= 0)
         {
@@ -2009,6 +2012,8 @@ class Program //Main Program
                     break;
             }
         }
+
+        Player.isTransaction = false;
     }
     static void BuyGun(int indexofType)
     {
@@ -2174,8 +2179,19 @@ class Program //Main Program
             Conversation("Hostile", "That's not an option.", 0.5f);
         }
     }
+    public static float FloorDivide(float a, float b)
+    {
+        if (((a < 0) ^ (b < 0)) && (a % b != 0))
+        {
+            return a / b - 1;
+        }
+        else
+        {
+            return a / b;
+        }
+    }
     //Location of every place in prison
-    
+
     //Listing down every item in game + info
     public static readonly Random RandomNumberGenerator = new();
     //1. Pistols
@@ -2214,7 +2230,7 @@ class Program //Main Program
     //8. Toys
     static readonly Toy tempName2 = new() { };
     //9. NPCs
-    static readonly NPC Alejandro = new() { isFriend = true, hasRumor = false, isSeller = false, npcAge = 64, npcHP = 216, npcJob = "Labourer", npcLvl = 47, npcName = "Alejandro", npcRelationship = 0, npcStrength = 23, Speed = 17 };
+    static readonly NPC Alejandro = new() { isFriend = true, hasRumor = false, isSeller = false, npcAge = 64, npcHP = 216, npcJob = "Labourer", npcLvl = 47, npcName = "Alejandro", npcRelationship = 0, npcStrength = 23, Speed = 15};
     static readonly NPC Pedro = new() { npcAge = 28, hasRumor = false, isHostile = true, npcHP = 180, npcJob = "Washer", npcLvl = 41, npcRelationship = 1, npcStrength = 19, Speed = 26, npcName = "Pedro" };
     //10. PrisonObjects
     static readonly PrisonObject jcToilet = new() { isBuyable = false, Colour = "White", HP = 210, Level = 1, Name = "Toilet", Owner = "Old Man", Description = "Actually well kept", isUsable = true, Usage = "You have taken a piss", Cost = 0, isSellable = false };
