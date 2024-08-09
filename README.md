@@ -1,2 +1,3 @@
 # Story-Based-Puzzle-Game
-Death game Genre text based game
+Death game Genre 2d Pixel Game
+This game's team members from Capstone 08 by Endless Studios
