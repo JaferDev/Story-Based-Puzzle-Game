@@ -1,3 +1,5 @@
+//This is a text based version I made, development started from 11/09/2023 but I stopped working on it a couple months ago
+
 using System.Diagnostics;
 
 class Object // Parent class for objects
